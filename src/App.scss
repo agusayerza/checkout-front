@@ -15,7 +15,7 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 6vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,11 +24,17 @@
   color: #fff;
 }
 
-@keyframes App-logo-float {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-10px);
-  }
+.main-container {
+  min-width: 400px;
+  margin: 10px !important;
+  width: 70% !important;
+  padding: 20xp;
+  border-radius: 20px;
+  border: 2px solid black;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+}
+
+.main-container:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }

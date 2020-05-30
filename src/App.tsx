@@ -4,15 +4,23 @@ import "./App.scss";
 import Counter from "./features/counter/Counter";
 import { Provider } from "react-redux";
 import store from "./store";
+import CheckOutForm from "components/CheckOutForm";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+declare global {
+  interface Window {
+    Mercadopago: any;
+  }
+}
 
 const App = () => {
   return (
     <Provider store={store}>
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <Counter />
-        </header>
+        <header className="App-header"></header>
+        <div className="d-flex p-2">
+          <CheckOutForm />
+        </div>
       </div>
     </Provider>
   );
