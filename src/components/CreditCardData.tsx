@@ -53,9 +53,6 @@ const CreditCardData = ({ cost, back, next }: CreditCardDataProps) => {
     if (paymentMethodId) getInstallments();
   }, [paymentMethodId])
 
-  useEffect(() => {
-    console.log(installmentNumber)
-  }, [installmentNumber])
 
   function getInstallments() {
     window.Mercadopago.getInstallments({
