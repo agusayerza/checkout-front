@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
 import { CartView } from "./CartView";
 import { Button, Col, Row } from 'react-bootstrap';
 import { ShippingOptions } from "./ShippingOptions";
