@@ -40,14 +40,10 @@ const CheckOutForm: React.FC = () => {
   }
 
   return (<Col className="main-container">
-    {step == 1 ? <CartView items={items} /> :
-      step == 2 ? <ShippingOptions setShippingCost={setShippingCost} /> :
-        <CreditCardData cost={initState.total + shippingCost} />}
+    {step == 1 ? <CartView items={items} next={pressedNext} back={pressedBack} /> :
+      step == 2 ? <ShippingOptions setShippingCost={setShippingCost} next={pressedNext} back={pressedBack} /> :
+        <CreditCardData cost={initState.total + shippingCost} next={pressedNext} back={pressedBack} />}
     {step}
-    <Row>
-      <Col><Button variant="light" onClick={pressedBack}>Back</Button></Col>
-      <Col><Button variant="primary" onClick={pressedNext}>Next</Button></Col>
-    </Row>
   </Col>);
 };
 
