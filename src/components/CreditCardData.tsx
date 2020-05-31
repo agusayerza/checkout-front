@@ -108,7 +108,7 @@ const CreditCardData = ({ cost, back, next }: CreditCardDataProps) => {
       const postToBack = fetch("http://localhost:8080/payment", {
         method: 'POST',
         body: JSON.stringify(payment),
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
+        headers: { 'Content-Type': 'application/json' }
       });
 
     }
