@@ -71,6 +71,6 @@ describe("The payment input page", () => {
     cy.get(".btn.btn-primary").click();
   });
   it("Show success message", () => {
-    cy.get("div#success_msg").should("not.have.descendants");
+    cy.get("div#success_msg").should("be.visible");
   });
 });
