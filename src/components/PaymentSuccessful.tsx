@@ -6,7 +6,7 @@ export default function PaymentSuccessful() {
     <Fragment>
       <Col>
         <Row>{/* <img src={Check} /> */}</Row>
-        <Row>Pago realizado</Row>
+        <Row id="success_msg">Pago realizado</Row>
       </Col>
     </Fragment>
   );
