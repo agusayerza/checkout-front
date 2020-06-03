@@ -5,6 +5,7 @@ import { Button, Col, Row } from 'react-bootstrap';
 import { ShippingOptions } from "./ShippingOptions";
 import CreditCardData from './CreditCardData'
 import { CartState, Items } from "./types"
+import PaymentSuccessful from "./PaymentSuccessful";
 
 const CheckOutForm: React.FC = () => {
   const [step, setStep] = useState(1);
@@ -42,8 +43,8 @@ const CheckOutForm: React.FC = () => {
   return (<Col className="main-container">
     {step == 1 ? <CartView items={items} next={pressedNext} back={pressedBack} /> :
       step == 2 ? <ShippingOptions setShippingCost={setShippingCost} next={pressedNext} back={pressedBack} /> :
-        <CreditCardData cost={initState.total + shippingCost} next={pressedNext} back={pressedBack} />}
-    {step}
+        step == 3 ? <CreditCardData cost={initState.total + shippingCost} next={pressedNext} back={pressedBack} /> :
+          <PaymentSuccessful />}
   </Col>);
 };
 

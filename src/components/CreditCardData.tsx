@@ -10,8 +10,7 @@ type CreditCardDataProps = {
 
 type Installments = {
   installments: number,
-  recommended_message: string,
-
+  recommended_message: string
 }
 
 const CreditCardData = ({ cost, back, next }: CreditCardDataProps) => {
@@ -20,7 +19,7 @@ const CreditCardData = ({ cost, back, next }: CreditCardDataProps) => {
   const [paymentMethodId, _setPaymentMethodId] = useState();
   const [installments, setInstallments] = useState<Installments[]>([]);
   const [installmentNumber, setInstallmentNumber] = useState<number>();
-  const [email, setEmail] = useState<string>();
+  const [email, setEmail] = useState<string>("");
   const [doSubmit, setDoSubmit] = useState<Boolean>(false);
 
   useEffect(() => {
@@ -28,6 +27,7 @@ const CreditCardData = ({ cost, back, next }: CreditCardDataProps) => {
   });
 
   useEffect(() => {
+    console.log("Card number: " + cardNumber);
     guessPaymentMethod();
   }, [cardNumber]);
 
@@ -41,6 +41,7 @@ const CreditCardData = ({ cost, back, next }: CreditCardDataProps) => {
   };
 
   function setPaymentMethod(status: number, response: { id: any; }[]) {
+    console.log("New payment method");
     if (status == 200) {
       let paymentMethodId = response[0].id;
       _setPaymentMethodId(paymentMethodId);
@@ -50,6 +51,7 @@ const CreditCardData = ({ cost, back, next }: CreditCardDataProps) => {
   }
 
   useEffect(() => {
+    console.log("PymntId: " + paymentMethodId);
     if (paymentMethodId) getInstallments();
   }, [paymentMethodId])
 
@@ -59,6 +61,7 @@ const CreditCardData = ({ cost, back, next }: CreditCardDataProps) => {
       "payment_method_id": paymentMethodId,
       "amount": parseFloat(cost + "")
     }, function (status: number, response: { payer_costs: Installments[]; }[]) {
+      console.log("New installments");
       if (status == 200) {
         let installments = response[0].payer_costs;
         setInstallments(installments);
@@ -71,7 +74,6 @@ const CreditCardData = ({ cost, back, next }: CreditCardDataProps) => {
   function doPay() {
     if (!doSubmit) {
       var $form = document.querySelector('#pay');
-
       window.Mercadopago.createToken($form, sdkResponseHandler);
 
       return false;
@@ -91,7 +93,7 @@ const CreditCardData = ({ cost, back, next }: CreditCardDataProps) => {
 
   function sdkResponseHandler(status: number, response: { id: string }) {
     if (status != 200 && status != 201) {
-      alert("verify filled data");
+      alert("Verify filled data");
     } else {
       let payment: Payment = {};
       payment.transaction_amount = cost;
@@ -106,7 +108,12 @@ const CreditCardData = ({ cost, back, next }: CreditCardDataProps) => {
         method: 'POST',
         body: JSON.stringify(payment),
         headers: { 'Content-Type': 'application/json' }
+      }).then(response => {
+        console.log(response);
+        if (response.ok) next();
       });
+
+
 
     }
   };
@@ -140,7 +147,9 @@ const CreditCardData = ({ cost, back, next }: CreditCardDataProps) => {
             <label>Cuotas</label>
             <select id="installments" className="form-control" name="installments" onChange={e => setInstallmentNumber(+e.target.value)}>
               {installments.map(installment => {
-                return (<option value={installment.installments}> {installment.recommended_message}</option>)
+                return (<option key={installment.installments} value={installment.installments}>
+                  {installment.recommended_message}
+                </option>)
               })}
             </select>
           </p>
@@ -156,7 +165,7 @@ const CreditCardData = ({ cost, back, next }: CreditCardDataProps) => {
             <label>Email</label>
             <input type="email" id="email" name="email" value={email} onChange={e => setEmail(e.target.value)} />
           </p>
-          <input type="hidden" name="payment_method_id" id="payment_method_id" />
+          <input type="hidden" name="payment_method_id" id="payment_method_id" value={paymentMethodId} />
         </fieldset>
       </form >
       <Row>
