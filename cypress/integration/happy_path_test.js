@@ -55,11 +55,11 @@ describe("The payment input page", () => {
       .type("1234")
       .should("have.value", "1234");
     cy.get("input#docNumber")
-      .type("123456789")
-      .should("have.value", "123456789");
+      .type("40719053")
+      .should("have.value", "40719053");
     cy.get("input#email")
-      .type("no-reply@gmail.com")
-      .should("have.value", "no-reply@gmail.com");
+      .type("noreply@gmail.com")
+      .should("have.value", "noreply@gmail.com");
     cy.get("select#installments")
       .select("1 cuota de $ 819,00 ($ 819,00)")
       .should("have.value", 1);
