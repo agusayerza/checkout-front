@@ -18,9 +18,7 @@ const App = () => {
     <Provider store={store}>
       <div className="App">
         <header className="App-header"></header>
-        <div className="d-flex p-2">
-          <CheckOutForm />
-        </div>
+        <CheckOutForm />
       </div>
     </Provider>
   );

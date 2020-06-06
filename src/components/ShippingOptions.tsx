@@ -1,68 +1,98 @@
 /* eslint-disable prettier/prettier */
-import React, { Component, useState } from 'react'
-import { connect } from 'react-redux'
-import { Form, Button, Col, Row, Dropdown } from 'react-bootstrap'
+import React, { Component, useState, Fragment, useEffect } from "react";
+import { Form, Button, Col, Row, Dropdown } from "react-bootstrap";
+import Loading from "./Loading";
+import { User, Address, Delivery, Item, Id, Checkout } from "../model";
+import { api, post } from "../utils/api";
+import { AddressList } from "./shipping/AddressList";
+import { ShippingCost } from "./shipping/ShippingCost";
 
 type ShippingOptionsProps = {
-  back(): void,
-  next(): void,
-  setShippingCost(cost: number): number
+  back(): void;
+  next(): void;
+  items: Item[];
+  me: User;
+  _setShippingCost(cost: number): number;
+  setCheckout(checkout: Checkout): void;
+};
+
+type CreateCart = {
+  products: Id[];
+  address: Id;
 }
 
-export const ShippingOptions = ({ setShippingCost, back, next }: ShippingOptionsProps) => {
+export const ShippingOptions = ({
+  _setShippingCost,
+  setCheckout,
+  back,
+  next,
+  items,
+  me,
+}: ShippingOptionsProps) => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [evaluating, setEvaluating] = useState<boolean>(true);
+  const [deliveryCost, setDeliveryCost] = useState<Delivery[]>([]);
+  const [shippingCost, setShippingCost] = useState<number>(0);
+  const [address, setAddress] = useState<Address>(me.addresses[0]);
 
-  const [province, setProvince] = useState("Provincia")
+  useEffect(() => {
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (items && address) {
+      setEvaluating(true);
+      const productsId: Id[] = items.map(p => { return { id: p.productId } });
+      const cart: CreateCart = {
+        products: productsId,
+        address: { id: address.id }
+      }
+      console.log(JSON.stringify(cart));
+      post<CreateCart, Checkout>("http://localhost:8080/cart", cart).then((checkout => {
+        const deliveries = checkout.productDeliveryDtoList;
+        const shippingCost: number = deliveries.map(d => { return d.deliveryCost }).reduce(function (a: number, b: number) { return a + b; });
+        setShippingCost(shippingCost);
+        setCheckout(checkout);
+        setDeliveryCost(deliveries)
+        setEvaluating(false);
+      }));
+
+    }
+  }, [address]);
+
+  function goNext() {
+    _setShippingCost(shippingCost);
+    next();
+  }
 
   return (
-    <div>
-      <Form>
-        <Form.Group controlId="postal">
-          <Form.Label>Código postal</Form.Label>
-          <Form.Control placeholder="Código postal" />
-          {/* <Form.Text className="text-muted"> 
-        </Form.Text> */}
-        </Form.Group>
-        <Form.Group controlId="province-local">
-          <Row>
-            <Dropdown>
-              <Dropdown.Toggle variant="light" id="dropdown-basic">
-                {province}
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu>
-                <Dropdown.Item onClick={() => setProvince("Buenos Aires")}>Buenos Aires</Dropdown.Item>
-                <Dropdown.Item onClick={() => setProvince("Mendoza")}>Mendoza</Dropdown.Item>
-                <Dropdown.Item onClick={() => setProvince("En la copa")}>En la copa</Dropdown.Item>
-                <Dropdown.Item onClick={() => setProvince("Europa")}>Europa</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-            <Form.Label>Localidad</Form.Label>
-            <Form.Control placeholder="Localidad" />
-          </Row>
-        </Form.Group>
-        <Form.Group controlId="street">
-          <Form.Label>Calle</Form.Label>
-          <Form.Control placeholder="Calle" />
-          <Form.Text className="text-muted">
-            Incluir piso/departamento de ser necesario.
-        </Form.Text>
-        </Form.Group>
-      </Form >
-      <Row>
-        <Col><Button variant="light" onClick={back}>Back</Button></Col>
-        <Col><Button variant="primary" onClick={next}>Next</Button></Col>
-      </Row>
-    </div>
-  )
-}
-
-// const mapStateToProps = (state) => ({
-
-// })
-
-// const mapDispatchToProps = {
-
-// }
-
-// export default connect(mapStateToProps, mapDispatchToProps)(ShippingOptions)
-export default (ShippingOptions)
+    <Fragment>
+      {loading == true ? (
+        <Loading />
+      ) : (
+          <Fragment>
+            <Row className="justify-content-center"><AddressList me={me} setAddress={setAddress} address={address} /></Row>
+            <Row className="justify-content-center" ><hr /></Row>
+            <Row className="justify-content-center">
+              {evaluating ? <Loading /> : <ShippingCost items={items} address={address} me={me} deliveryCost={deliveryCost} />}
+            </Row>
+            <div className="mt-auto buttons">
+              <Row>
+                <Col>
+                  <Button variant="light" onClick={back}>
+                    Back
+                </Button>
+                </Col>
+                <Col>
+                  <Button variant="primary" onClick={goNext}>
+                    Next
+                </Button>
+                </Col>
+              </Row>
+            </div>
+          </Fragment>
+        )}
+    </Fragment>
+  );
+};
+export default ShippingOptions;

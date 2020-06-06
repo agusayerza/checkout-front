@@ -1,51 +1,103 @@
 /* eslint-disable */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, Fragment } from "react";
 import { CartView } from "./CartView";
-import { Button, Col, Row } from 'react-bootstrap';
+import { Button, Col, Row } from "react-bootstrap";
 import { ShippingOptions } from "./ShippingOptions";
-import CreditCardData from './CreditCardData'
-import { CartState, Items } from "./types"
+import CreditCardData from "./CreditCardData";
+import { CartState, Items } from "./types";
 import PaymentSuccessful from "./PaymentSuccessful";
+import Loading from "./Loading";
+import { User, Address, Product, Item, Checkout } from "../model";
+import { api } from "../utils/api";
 
 const CheckOutForm: React.FC = () => {
+
   const [step, setStep] = useState(1);
   const [shippingCost, _setShippingCost] = useState(-1);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [me, setMe] = useState<User>();
+  const [items, setItems] = useState<Item[]>([]);
+  const [checkout, setCheckout] = useState<Checkout>();
+  const [total, setTotal] = useState<number>(0);
 
   const setShippingCost = (newCost: number): number => {
     _setShippingCost(newCost);
-    return initState.total + newCost;
-  }
+    return total + newCost;
+  };
 
-  const initState: CartState = {
-    items: [
-      { id: 1, title: 'Winter body', desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima, ex.", price: 110 },
-      { id: 2, title: 'Adidas', desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima, ex.", price: 80 },
-      { id: 3, title: 'Vans', desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima, ex.", price: 120 },
-      { id: 4, title: 'White', desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima, ex.", price: 260 },
-      { id: 5, title: 'Cropped-sho', desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima, ex.", price: 160 },
-      { id: 6, title: 'Blues', desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima, ex.", price: 90 }
-    ],
-    total: 820
+  useEffect(() => {
+    if (me && items) setLoading(false);
+  }, [me, items]);
 
-  }
+  useEffect(() => {
+    api<User>("http://localhost:8080/users/me")
+      .then((u) => {
+        setMe(u);
+        console.log(JSON.stringify(u));
+      })
+      .catch((e) => {
+        console.log(e);
+      });
 
-  const [items, setItems] = useState(initState.items);
-  const [total, setTotal] = useState(initState.total);
+    api<Product>("http://localhost:8080/valued-products/search/ARC").then(
+      (product) => {
+        const productTransformed = [
+          {
+            id: product.id,
+            name: product.productDto.productName,
+            productId: product.productDto.id,
+            desc:
+              "Arc Reactor is a device initially designed by Howard Stark, and later adapted by his son, Tony, which has an energy output of 8 gigajoules per second.",
+            value: product.value,
+          },
+        ];
+        setItems(productTransformed);
+        setTotal(productTransformed.map(a => { return a.value }).reduce((a, b) => { return a + b }));
+      }
+    );
+  }, []);
 
   const pressedNext = () => {
     setStep(step + 1);
-  }
+  };
 
   const pressedBack = () => {
-    setStep(step - 1);
-  }
+    if (step > 1)
+      setStep(step - 1);
+  };
 
-  return (<Col className="main-container">
-    {step == 1 ? <CartView items={items} next={pressedNext} back={pressedBack} /> :
-      step == 2 ? <ShippingOptions setShippingCost={setShippingCost} next={pressedNext} back={pressedBack} /> :
-        step == 3 ? <CreditCardData cost={initState.total + shippingCost} next={pressedNext} back={pressedBack} /> :
-          <PaymentSuccessful />}
-  </Col>);
+  return (
+    <div className="global-container">
+      <div className="main-container container d-flex flex-column">
+        {loading == true ? (
+          <Loading />
+        ) : step == 1 && me && items ? (
+          <CartView items={items} me={me} next={pressedNext} back={pressedBack} />
+        ) : step == 2 && me ? (
+          <ShippingOptions
+            items={items}
+            setCheckout={setCheckout}
+            _setShippingCost={setShippingCost}
+            next={pressedNext}
+            back={pressedBack}
+            me={me}
+          />
+        ) : step == 3 && me && checkout ? (
+          <CreditCardData
+            me={me}
+            checkoutId={checkout.id}
+            cost={total + shippingCost}
+            next={pressedNext}
+            back={pressedBack}
+          />
+        ) : step == 3 && me ? (
+          <PaymentSuccessful />
+        ) : (
+                    <Loading />
+                  )}
+      </div>
+    </div>
+  );
 };
 
 export default CheckOutForm;
