@@ -1,4 +1,5 @@
 
+  
   export interface Id {
     id: number;
   }
@@ -56,6 +57,7 @@
   export type Payment = {
     userId: number,
     checkoutId: number,
+    issuerId?: string,
     transaction_amount?: number,
     token?: string,
     description?: string,

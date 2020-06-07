@@ -3,6 +3,7 @@ import { Row, Col, Button } from 'react-bootstrap'
 import Cards, { Focused } from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
 import { Payment, User } from "../model"
+import { MPInstallmentsResponse, MPMethodIdResponse } from '../model/MercadoPago'
 import { checkServerIdentity } from 'tls';
 type CreditCardDataProps = {
   me: User,
@@ -21,7 +22,7 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
 
   const [cardNumber, setCardNumber] = useState<string>("3711 8030 3257 522")
   const [cardName, setCardName] = useState<string>("APRO")
-  const [paymentMethodId, _setPaymentMethodId] = useState();
+  const [paymentMethodId, _setPaymentMethodId] = useState<string>();
   const [installments, setInstallments] = useState<Installments[]>([]);
   const [installmentNumber, setInstallmentNumber] = useState<number>();
   const [email, setEmail] = useState<string>("a@a.com");
@@ -31,7 +32,10 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
   const [expiry, setExpiry] = useState<string>("");
   const [expiryMonth, setExpiryMonth] = useState<string>("11");
   const [expiryYear, setExpiryYear] = useState<string>("25");
+  const [issuerId, setIssuerId] = useState<string>("");
+
   useEffect(() => {
+    window.Mercadopago.setPublishableKey("TEST-c6c5ce57-514c-4dd0-ae64-7a280781bc25");
     window.Mercadopago.getIdentificationTypes();
   }, []);
 
@@ -55,8 +59,9 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
     }
   };
 
-  function setPaymentMethod(status: number, response: { id: any; }[]) {
+  function setPaymentMethod(status: number, response: MPMethodIdResponse[]) {
     console.log("New payment method");
+    console.log(JSON.stringify(response));
     if (status == 200) {
       let paymentMethodId = response[0].id;
       _setPaymentMethodId(paymentMethodId);
@@ -71,15 +76,19 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
   }, [paymentMethodId])
 
 
+
   function getInstallments() {
     window.Mercadopago.getInstallments({
       "payment_method_id": paymentMethodId,
       "amount": parseFloat(cost + "")
-    }, function (status: number, response: { payer_costs: Installments[]; }[]) {
+    }, function (status: number, response: MPInstallmentsResponse[]) {
       console.log("New installments");
       if (status == 200) {
         let installments = response[0].payer_costs;
         setInstallments(installments);
+        let issuer_id = response[0].issuer.id;
+        console.log("Issuer: " + issuer_id);
+        setIssuerId(issuer_id);
       } else {
         alert(`installments method info error: ${response}`);
       }
@@ -109,9 +118,10 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
       payment.transaction_amount = cost;
       payment.token = response.id;
       payment.payment_method_id = paymentMethodId;
-      payment.installments = installmentNumber;
+      payment.installments = 1;
       payment.payer = { email: email };
-      payment.description = "Y pa que quiere saber eso?";
+      payment.description = "Description";
+      payment.issuerId = issuerId;
       console.log(payment);
 
       fetch("http://localhost:8080/sales", {
