@@ -35,8 +35,6 @@
 
   export interface Item {
     id: number;
-    productId: number;
-    value: number;
     desc: string,
     name: string
   }

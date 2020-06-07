@@ -43,7 +43,7 @@ export const CartView = ({ me, items, back, next }: CartViewProps) => {
                   </td>
                   <td align="right">
                     <span id="amount" className="amount">
-                      ${item.value}
+                      {/*${item.value}*/}
                     </span>
                   </td>
                 </tr>

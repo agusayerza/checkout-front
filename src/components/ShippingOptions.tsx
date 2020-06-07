@@ -42,13 +42,14 @@ export const ShippingOptions = ({
   useEffect(() => {
     if (items && address) {
       setEvaluating(true);
-      const productsId: Id[] = items.map(p => { return { id: p.productId } });
+      const productsId: Id[] = items.map(p => { return { id: p.id } });
       const cart: CreateCart = {
         products: productsId,
         address: { id: address.id }
       }
       console.log(JSON.stringify(cart));
       post<CreateCart, Checkout>("http://localhost:8080/cart", cart).then((checkout => {
+        console.log(checkout);
         const deliveries = checkout.productDeliveryDtoList;
         const shippingCost: number = deliveries.map(d => { return d.deliveryCost }).reduce(function (a: number, b: number) { return a + b; });
         setShippingCost(shippingCost);

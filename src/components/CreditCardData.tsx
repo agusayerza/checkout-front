@@ -114,7 +114,7 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
       payment.description = "Y pa que quiere saber eso?";
       console.log(payment);
 
-      fetch("http://localhost:8080/mercado-pago/payment", {
+      fetch("http://localhost:8080/sales", {
         method: 'POST',
         body: JSON.stringify(payment),
         headers: { 'Content-Type': 'application/json' }
@@ -122,9 +122,6 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
         console.log(response);
         if (response.ok) next();
       });
-
-
-
     }
   };
 
