@@ -55,7 +55,7 @@ export const ShippingCost = ({
       <Table>
         <Row>
           <Col>Total: </Col>
-          <Col>${deliveryCost.map(d => d.deliveryCost).reduce((a, b) => { return a + b; })}</Col>
+          <Col id="total-delivery-cost">${deliveryCost.map(d => d.deliveryCost).reduce((a, b) => { return a + b; })}</Col>
         </Row>
       </Table>
     </Row>

@@ -1,30 +1,8 @@
-describe("The main page", () => {
+describe("The checkout page", () => {
   it("Succesfully loads", () => {
     cy.visit("http://localhost:3000/");
   });
-  it("Next moves to address input page", () => {
-    cy.visit("http://localhost:3000/");
-    cy.get(".btn.btn-primary").click();
-    cy.get("div#select-address-text")
-    .should("contain.text", "Select on of your addresses:");
-  });
-});
-
-describe("The address input page", () => {
-  it("Shows the correct address on the drop down", () => {
-    cy.visit("http://localhost:3000/");
-    cy.get(".btn.btn-primary").click();
-    cy.get("div#address button")
-    .should("contain.text", "Leaman Place 569, Brooklyn");
-  });
-  it("Shows the expected total shipping value", () => {
-    cy.get("#total-delivery-cost")
-    .should("contain.text", "$50");
-  });
-});
-
-describe("The payment input page", () => {
-  it("Input works properly", () => {
+  it("Rejects invalid input on credit card data", () => {
     cy.visit("http://localhost:3000/");
     cy.get(".btn.btn-primary").click();
     cy.get(".btn.btn-primary").click();
@@ -33,8 +11,8 @@ describe("The payment input page", () => {
       .type("3711 8030 3257 522")
       .should("have.value", "3711 8030 3257 522");
     cy.get("input#cardholderName")
-      .type("APRO")
-      .should("have.value", "APRO");
+      .type("#invalid")
+      .should("have.value", "#invalid");
     cy.get("input#cardExpirationMonth")
       .type("11")
       .should("have.value", "11");
@@ -56,12 +34,12 @@ describe("The payment input page", () => {
     cy.get("select#installments")
       .select("6 cuotas de $ 12,24 ($ 73,44)")
       .should("have.value", 6);
-  });
-  it("It navigates", () => {
-    cy.get(".btn.btn-primary").click();
-  });
-  it("Show success message", () => {
-    cy.wait(3000) // wait for 3 seconds
-    cy.get("div#success_msg").should("be.visible");
+
+    const stub = cy.stub()  
+    cy.on ('window:alert', stub);
+    cy.get(".btn.btn-primary").click()
+    .then(() => {
+      expect(stub.getCall(0)).to.be.calledWith('Invalid form data')      
+    })  
   });
 });

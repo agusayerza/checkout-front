@@ -7,7 +7,7 @@ import CreditCardData from "./CreditCardData";
 import { CartState, Items } from "./types";
 import PaymentSuccessful from "./PaymentSuccessful";
 import Loading from "./Loading";
-import {User, Address, Product, Item, Checkout, ProductDto} from "../model";
+import { User, Address, Product, Item, Checkout, ProductDto } from "../model";
 import { api } from "../utils/api";
 
 const CheckOutForm: React.FC = () => {
@@ -42,11 +42,11 @@ const CheckOutForm: React.FC = () => {
     api<ProductDto>("http://localhost:8080/products/5").then(
       (product) => {
         const productTransformed = [{
-            name: product.productName,
-            id: product.id,
-            desc:
-                "Arc Reactor is a device initially designed by Howard Stark, and later adapted by his son, Tony, which has an energy output of 8 gigajoules per second."
-          }];
+          name: product.productName,
+          id: product.id,
+          desc:
+            "Arc Reactor is a device initially designed by Howard Stark, and later adapted by his son, Tony, which has an energy output of 8 gigajoules per second."
+        }];
         setItems(productTransformed);
         // setTotal(productTransformed.map(a => { return a.value }).reduce((a, b) => { return a + b }));
         setTotal(0)
@@ -87,7 +87,7 @@ const CheckOutForm: React.FC = () => {
             next={pressedNext}
             back={pressedBack}
           />
-        ) : step == 3 && me ? (
+        ) : step == 4 && me ? (
           <PaymentSuccessful />
         ) : (
                     <Loading />

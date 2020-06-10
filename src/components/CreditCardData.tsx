@@ -20,18 +20,18 @@ type Installments = {
 
 const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProps) => {
 
-  const [cardNumber, setCardNumber] = useState<string>("3711 8030 3257 522")
-  const [cardName, setCardName] = useState<string>("APRO")
+  const [cardNumber, setCardNumber] = useState<string>("")
+  const [cardName, setCardName] = useState<string>("")
   const [paymentMethodId, _setPaymentMethodId] = useState<string>();
   const [installments, setInstallments] = useState<Installments[]>([]);
   const [installmentNumber, setInstallmentNumber] = useState<number>();
-  const [email, setEmail] = useState<string>("a@a.com");
+  const [email, setEmail] = useState<string>("");
   const [doSubmit, setDoSubmit] = useState<Boolean>(false);
-  const [cvc, setCVC] = useState<string>("1234");
+  const [cvc, setCVC] = useState<string>("");
   const [focus, setFocus] = useState<Focused>();
   const [expiry, setExpiry] = useState<string>("");
-  const [expiryMonth, setExpiryMonth] = useState<string>("11");
-  const [expiryYear, setExpiryYear] = useState<string>("25");
+  const [expiryMonth, setExpiryMonth] = useState<string>("");
+  const [expiryYear, setExpiryYear] = useState<string>("");
   const [issuerId, setIssuerId] = useState<string>("");
 
   useEffect(() => {
@@ -86,6 +86,7 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
       if (status == 200) {
         let installments = response[0].payer_costs;
         setInstallments(installments);
+        setInstallmentNumber(1);
         let issuer_id = response[0].issuer.id;
         console.log("Issuer: " + issuer_id);
         setIssuerId(issuer_id);
@@ -112,7 +113,7 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
 
   function sdkResponseHandler(status: number, response: { id: string }) {
     if (status != 200 && status != 201) {
-      alert("Verify filled data");
+      alert("Invalid form data");
     } else {
       let payment: Payment = { userId: me.id, checkoutId: checkoutId };
       payment.transaction_amount = cost;

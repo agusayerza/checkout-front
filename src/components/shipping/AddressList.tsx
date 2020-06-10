@@ -16,9 +16,9 @@ export const AddressList = ({
     <Fragment>
       <Col>
         <Row className="justify-content-center">
-          <Col>Select on of your addresses: </Col>
+          <Col id="select-address-text">Select on of your addresses: </Col>
           <Col>
-            <Dropdown>
+            <Dropdown id="address">
               <Dropdown.Toggle variant="light" id="dropdown-basic">
                 {address.streetName + " " + address.height + ", " + address.cityName}
               </Dropdown.Toggle>
