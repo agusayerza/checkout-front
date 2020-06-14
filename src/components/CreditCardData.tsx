@@ -2,9 +2,9 @@ import React, { useState, useEffect, Fragment, FocusEvent } from 'react'
 import { Row, Col, Button } from 'react-bootstrap'
 import Cards, { Focused } from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
-import { Payment, User } from "../model"
+import { Payment, User, SaleDto } from "../model"
 import { MPInstallmentsResponse, MPMethodIdResponse } from '../model/MercadoPago'
-import { checkServerIdentity } from 'tls';
+import { api, post } from "../utils/api";
 type CreditCardDataProps = {
   me: User,
   checkoutId: number,
@@ -33,6 +33,7 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
   const [expiryMonth, setExpiryMonth] = useState<string>("");
   const [expiryYear, setExpiryYear] = useState<string>("");
   const [issuerId, setIssuerId] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<any>(null);
 
   useEffect(() => {
     window.Mercadopago.setPublishableKey("TEST-c6c5ce57-514c-4dd0-ae64-7a280781bc25");
@@ -44,7 +45,6 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
   }, [expiryMonth, expiryYear])
 
   useEffect(() => {
-    console.log("Card number: " + cardNumber);
     guessPaymentMethod();
   }, [cardNumber]);
 
@@ -60,18 +60,15 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
   };
 
   function setPaymentMethod(status: number, response: MPMethodIdResponse[]) {
-    console.log("New payment method");
-    console.log(JSON.stringify(response));
     if (status == 200) {
       let paymentMethodId = response[0].id;
       _setPaymentMethodId(paymentMethodId);
     } else {
-      alert(`payment method info error: ${JSON.stringify(response)}`);
+      console.log(`payment method info error: ${JSON.stringify(response)}`);
     }
   }
 
   useEffect(() => {
-    console.log("PymntId: " + paymentMethodId);
     if (paymentMethodId) getInstallments();
   }, [paymentMethodId])
 
@@ -91,12 +88,13 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
         console.log("Issuer: " + issuer_id);
         setIssuerId(issuer_id);
       } else {
-        alert(`installments method info error: ${response}`);
+        console.log(`installments method info error: ${response}`);
       }
     });
   }
 
   function doPay() {
+    setErrorMessage(null);
     if (!doSubmit) {
       var $form = document.querySelector('#pay');
       window.Mercadopago.createToken($form, sdkResponseHandler);
@@ -112,6 +110,7 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
   }
 
   function sdkResponseHandler(status: number, response: { id: string }) {
+    console.log("Response from MP")
     if (status != 200 && status != 201) {
       alert("Invalid form data");
     } else {
@@ -123,15 +122,18 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
       payment.payer = { email: email };
       payment.description = "Description";
       payment.issuerId = issuerId;
-      console.log(payment);
+      console.log(JSON.stringify(payment));
 
-      fetch("http://localhost:8080/sales", {
-        method: 'POST',
-        body: JSON.stringify(payment),
-        headers: { 'Content-Type': 'application/json' }
-      }).then(response => {
-        console.log(response);
-        if (response.ok) next();
+      post<Payment, SaleDto>("http://localhost:8080/sales", payment).then(sale => {
+        console.log(sale);
+
+        if (sale.success) {
+          next();
+        } else {
+          setErrorMessage(sale.message);
+          // limpiar sesión para poder  volver a crear un payment.
+          window.Mercadopago.clearSession();
+        }
       });
     }
   };
@@ -207,6 +209,9 @@ const CreditCardData = ({ checkoutId, me, cost, back, next }: CreditCardDataProp
             <Row className="justify-content-center">A pagar: ${cost}</Row>
           </Col>
         </Col>
+      </Row>
+      <Row className="justify-content-md-center">
+        {errorMessage ? <div id="backend-error">{errorMessage}</div> : <Fragment></Fragment>}
       </Row>
       <div className="mt-auto buttons">
         <Row>

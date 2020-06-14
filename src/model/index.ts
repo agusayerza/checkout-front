@@ -67,3 +67,8 @@
       email?: string
     }
   }
+
+  export type SaleDto = {
+    success: boolean,
+    message: string
+  }

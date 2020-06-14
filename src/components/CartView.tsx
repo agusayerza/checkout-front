@@ -17,14 +17,12 @@ export const CartView = ({ me, items, back, next }: CartViewProps) => {
     <Fragment>
       <h2>Carrito de {me?.name + " " + me?.surname}</h2>
       <table id="myTable" className="table">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Name</th>
-            <th>Decription</th>
-            <th>Price</th>
-          </tr>
-        </thead>
+        <tr>
+          <th>Product</th>
+          <th>Name</th>
+          <th>Decription</th>
+          <th>Price</th>
+        </tr>
         <tbody>
           {items.map((item) => {
             return (

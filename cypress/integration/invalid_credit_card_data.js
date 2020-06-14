@@ -3,6 +3,10 @@ describe("The checkout page", () => {
     cy.visit("http://localhost:3000/");
   });
   it("Rejects invalid input on credit card data", () => {
+    
+    const stub = cy.stub()  
+    cy.on ('window:alert', stub);
+
     cy.visit("http://localhost:3000/");
     cy.get(".btn.btn-primary").click();
     cy.get(".btn.btn-primary").click();
@@ -10,6 +14,7 @@ describe("The checkout page", () => {
     cy.get("input#cardNumber")
       .type("3711 8030 3257 522")
       .should("have.value", "3711 8030 3257 522");
+    cy.wait(500);
     cy.get("input#cardholderName")
       .type("#invalid")
       .should("have.value", "#invalid");
@@ -31,12 +36,6 @@ describe("The checkout page", () => {
     cy.get("select#installments")
       .select("1 cuota de $ 50,00 ($ 50,00)")
       .should("have.value", 1);
-    cy.get("select#installments")
-      .select("6 cuotas de $ 12,24 ($ 73,44)")
-      .should("have.value", 6);
-
-    const stub = cy.stub()  
-    cy.on ('window:alert', stub);
     cy.get(".btn.btn-primary").click()
     .then(() => {
       expect(stub.getCall(0)).to.be.calledWith('Invalid form data')      

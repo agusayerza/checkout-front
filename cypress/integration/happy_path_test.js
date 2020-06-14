@@ -32,6 +32,7 @@ describe("The payment input page", () => {
     cy.get("input#cardNumber")
       .type("3711 8030 3257 522")
       .should("have.value", "3711 8030 3257 522");
+    cy.wait(500);
     cy.get("input#cardholderName")
       .type("APRO")
       .should("have.value", "APRO");
@@ -53,15 +54,12 @@ describe("The payment input page", () => {
     cy.get("select#installments")
       .select("1 cuota de $ 50,00 ($ 50,00)")
       .should("have.value", 1);
-    cy.get("select#installments")
-      .select("6 cuotas de $ 12,24 ($ 73,44)")
-      .should("have.value", 6);
   });
-  it("It navigates", () => {
+  it("Post", () => {
     cy.get(".btn.btn-primary").click();
   });
   it("Show success message", () => {
-    cy.wait(3000) // wait for 3 seconds
+    cy.wait(3000) // wait for 5 seconds
     cy.get("div#success_msg").should("be.visible");
   });
 });
