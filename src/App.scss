@@ -60,12 +60,13 @@
 }
 
 .checkout-card {
-  max-width: 75%;
+  max-width: 98% !important;
   min-width: 75%;
   padding: 10px;
 }
 
 .nav-link {
+  padding: .1rem 1rem !important;
   color: white;
 }
 
@@ -75,7 +76,7 @@
 
 .nav-is-active {
   border-bottom: solid white 1px;
-  margin-bottom: 3px;
+  margin-bottom: 0.2rem;
 }
 
 .buttons {
