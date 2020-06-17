@@ -72,3 +72,62 @@
     success: boolean,
     message: string
   }
+
+  export interface Order {
+    id: number;
+    userId: number;
+    checkOutId: number;
+    localDateTime: Date;
+    success: boolean;
+    message: string;
+}
+
+export interface ToDto {
+  id: number;
+  height: number;
+  streetName: string;
+  cityName: string;
+  province: string;
+  postalCode: number;
+}
+
+export interface FromDto {
+  id: number;
+  height: number;
+  streetName: string;
+  cityName: string;
+  province: string;
+  postalCode: number;
+}
+
+export interface AddressDto {
+  id: number;
+  height: number;
+  streetName: string;
+  cityName: string;
+  province: string;
+  postalCode: number;
+}
+
+export interface ProductDeliveryDtoList {
+  id: number;
+  deliveryCost: number;
+  toDto: ToDto;
+  fromDto: FromDto;
+  productDto: ProductDto;
+}
+
+export interface ValuedProductDtosList {
+  id: number;
+  value: number;
+  productDto: ProductDto;
+  dateTime: Date;
+}
+
+export interface FullCheckout {
+  id: number;
+  productDeliveryDtoList: ProductDeliveryDtoList[];
+  valuedProductDtosList: ValuedProductDtosList[];
+}
+
+

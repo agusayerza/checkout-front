@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useEffect, useRef, useState, Fragment } from "react";
 import { CartView } from "./CartView";
-import { Button, Col, Row } from "react-bootstrap";
+import { Button, Col, Row, Container } from "react-bootstrap";
 import { ShippingOptions } from "./ShippingOptions";
 import CreditCardData from "./CreditCardData";
 import { CartState, Items } from "./types";
@@ -33,7 +33,6 @@ const CheckOutForm: React.FC = () => {
     api<User>("http://localhost:8080/users/me")
       .then((u) => {
         setMe(u);
-        console.log(JSON.stringify(u));
       })
       .catch((e) => {
         console.log(e);
@@ -64,36 +63,37 @@ const CheckOutForm: React.FC = () => {
   };
 
   return (
-    <div className="global-container">
-      <div className="main-container container d-flex flex-column">
-        {loading == true ? (
-          <Loading />
-        ) : step == 1 && me && items ? (
-          <CartView items={items} me={me} next={pressedNext} back={pressedBack} />
-        ) : step == 2 && me ? (
-          <ShippingOptions
-            items={items}
-            setCheckout={setCheckout}
-            _setShippingCost={setShippingCost}
-            next={pressedNext}
-            back={pressedBack}
-            me={me}
-          />
-        ) : step == 3 && me && checkout ? (
-          <CreditCardData
-            me={me}
-            checkoutId={checkout.id}
-            cost={total + shippingCost}
-            next={pressedNext}
-            back={pressedBack}
-          />
-        ) : step == 4 && me ? (
-          <PaymentSuccessful />
-        ) : (
-                    <Loading />
-                  )}
-      </div>
-    </div>
+    <Fragment>
+      <Container className="main-container container-own">
+        <Row className="justify-content-md-center">
+          <Col md={"auto"}>
+            {loading == true ? (
+              <Loading />
+            ) : step == 1 && me && items ? (
+              <CartView items={items} me={me} next={pressedNext} back={pressedBack} />
+            ) : step == 2 && me ? (
+              <ShippingOptions
+                items={items}
+                setCheckout={setCheckout}
+                _setShippingCost={setShippingCost}
+                next={pressedNext}
+                back={pressedBack}
+                me={me}
+              />
+            ) : step == 3 && me && checkout ? (
+              <CreditCardData
+                me={me}
+                checkoutId={checkout.id}
+                cost={total + shippingCost}
+                next={pressedNext}
+                back={pressedBack}
+              />
+            ) : step == 4 && me ? (
+              <PaymentSuccessful />
+            ) : (
+                        <Loading />
+                      )}</Col></Row></Container>
+    </Fragment>
   );
 };
 

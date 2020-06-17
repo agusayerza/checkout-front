@@ -1,6 +1,6 @@
 describe("Mercado pago possible outcomes", () => {
   it("Mercado Pago rejects", () => {
-    cy.visit("http://localhost:3000/");
+    cy.visit("http://localhost:3000/cart");
     cy.get(".btn.btn-primary").click();
     cy.get(".btn.btn-primary").click();
     cy.get("input#cardNumber")
@@ -34,7 +34,7 @@ describe("Mercado pago possible outcomes", () => {
   });
 
   it("Mercado Pago approves", () => {
-    cy.visit("http://localhost:3000/");
+    cy.visit("http://localhost:3000/cart");
     cy.get(".btn.btn-primary").click();
     cy.get(".btn.btn-primary").click();
     cy.get("input#cardNumber")
@@ -70,7 +70,7 @@ describe("Mercado pago possible outcomes", () => {
   });
 
   it("Mercado Pago reject and then retry", () => {
-    cy.visit("http://localhost:3000/");
+    cy.visit("http://localhost:3000/cart");
     cy.get(".btn.btn-primary").click();
     cy.get(".btn.btn-primary").click();
     cy.get("input#cardNumber")

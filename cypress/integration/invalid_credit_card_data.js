@@ -1,13 +1,10 @@
 describe("The checkout page", () => {
-  it("Succesfully loads", () => {
-    cy.visit("http://localhost:3000/");
-  });
   it("Rejects invalid input on credit card data", () => {
     
     const stub = cy.stub()  
     cy.on ('window:alert', stub);
 
-    cy.visit("http://localhost:3000/");
+    cy.visit("http://localhost:3000/cart");
     cy.get(".btn.btn-primary").click();
     cy.get(".btn.btn-primary").click();
     cy.get("select#installments").should("not.have.descendants");

@@ -1,9 +1,9 @@
 describe("The main page", () => {
   it("Succesfully loads", () => {
-    cy.visit("http://localhost:3000/");
+    cy.visit("http://localhost:3000/cart");
   });
   it("Next moves to address input page", () => {
-    cy.visit("http://localhost:3000/");
+    cy.visit("http://localhost:3000/cart");
     cy.get(".btn.btn-primary").click();
     cy.get("div#select-address-text")
     .should("contain.text", "Select on of your addresses:");
@@ -12,7 +12,7 @@ describe("The main page", () => {
 
 describe("The address input page", () => {
   it("Shows the correct address on the drop down", () => {
-    cy.visit("http://localhost:3000/");
+    cy.visit("http://localhost:3000/cart");
     cy.get(".btn.btn-primary").click();
     cy.get("div#address button")
     .should("contain.text", "Leaman Place 569, Brooklyn");
@@ -25,7 +25,7 @@ describe("The address input page", () => {
 
 describe("The payment input page", () => {
   it("Input works properly", () => {
-    cy.visit("http://localhost:3000/");
+    cy.visit("http://localhost:3000/cart");
     cy.get(".btn.btn-primary").click();
     cy.get(".btn.btn-primary").click();
     cy.get("select#installments").should("not.have.descendants");

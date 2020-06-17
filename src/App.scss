@@ -31,14 +31,18 @@
 }
 .main-container {
   min-height: 75vh;
-  max-width: 75vh;
+  max-height: 100%;
+  min-width: 75vh;
+  max-width: 100%;
+}
+
+.container-own {
   flex: 1;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
   margin: 10px !important;
   font-family: "Roboto", sans-serif;
-  width: 70% !important;
   padding: 20xp;
   padding: 5px;
   border: 1px solid black;
@@ -46,8 +50,32 @@
   transition: 0.3s;
 }
 
-.main-container:hover {
+.container-own:hover {
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.full-width{
+  min-width: 97%;
+  margin: 20px;
+}
+
+.checkout-card {
+  max-width: 75%;
+  min-width: 75%;
+  padding: 10px;
+}
+
+.nav-link {
+  color: white;
+}
+
+.nav-link:hover {
+  color: #ddd;
+}
+
+.nav-is-active {
+  border-bottom: solid white 1px;
+  margin-bottom: 3px;
 }
 
 .buttons {
